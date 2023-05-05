@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Unique Timer</title>
+  <style>
+    body {
+      background-color: #7bb3ee;
+    }
+
+    #timer {
+      margin: 40px;
+      text-align: center;
+      border: 6px solid rgb(166, 221, 166);
+      border-radius: 15px;
+      padding: 58px;
+    }
+
+    #timer h2 {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: inline-block;
+    }
+
+    input[type=number] {
+      width: 130px;
+      height: 40px;
+      font-size: 28px;
+      text-align: center;
+      margin-right: 10px;
+    }
+
+    input[type=button] {
+      width: 100px;
+      height: 40px;
+      font-size: 20px;
+      margin-left: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    input[type=button]:hover {
+      background-color: #e696f2;
+    }
+
+    #btn {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="timer">
+    <h2>CountDown Timer </h2>
+    <form>
+      <input type="number" id="hours" placeholder="Hours">
+      <input type="number" id="minutes" placeholder="Minutes">
+      <input type="number" id="seconds" placeholder="Seconds">
+      <input type="button" id="btn" value="Start" onclick="startTimer()">
+    </form>
+    <div id="unique-timer"></div>
+  </div>
+  <audio id="alert-sound" src="alert.mp3"></audio>
+  <script>
+    var timers = [];
+
+    function startTimer() {
+      var hours = parseInt(document.getElementById("hours").value);
+      var minutes = parseInt(document.getElementById("minutes").value);
+      var seconds = parseInt(document.getElementById("seconds").value);
+
+      var totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+      if (isNaN(totalSeconds)) {
+        alert("Please enter a valid time.");
+        return;
+      }
+
+      var id = Math.random().toString(36).substring(2);
+      timers.push(id);
+
+      var countdownTimer = setInterval(function () {
+        if (!timers.includes(id)) {
+          clearInterval(countdownTimer);
+          return;
+        }
+
+        var hours = Math.floor(totalSeconds / 3600);
+        var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
+        var seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+
+        var timerStr = (hours < 10 ? "0" : "") + hours + ":" +
+          (minutes < 10 ? "0" : "") + minutes + ":" +
+          (seconds < 10 ? "0" : "") + seconds;
+
+        document.getElementById("unique-timer").innerHTML = timerStr;
+
+        if (totalSeconds <= 0) {
+          clearInterval(countdownTimer);
+          document.getElementById("alert-sound").play();
+          alert("Timer has expired!");
+        }
+
+        totalSeconds--;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      var id = document.getElementById("timer-id").value;
+      var index = timers.indexOf(id);
+      if (index > -1) {
+        timers.splice(index, 1);
+      }
+    }
+  </script>
+</body>
+
+</html>
